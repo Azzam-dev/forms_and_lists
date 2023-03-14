@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 enum ProjectStatus {
   cancelled,
   review,
   approve,
   completed,
+}
+
+class Project {
+  String name = "";
+  String manager = "";
+  int cost = 0;
+  ProjectStatus? status;
 }
 
 class PageOne extends StatefulWidget {
@@ -17,11 +25,41 @@ class PageOne extends StatefulWidget {
 }
 
 class _PageOneState extends State<PageOne> {
-  String projectName = "";
+  Project project = Project();
+  List<Project> projects = [];
 
-  String projectManager = "";
-
-  ProjectStatus? projectStatus;
+  checkAllData() {
+    if (project.name.isEmpty) {
+      Fluttertoast.showToast(
+          msg: "فضلا قم بادخال اسم للمشروع",
+          textColor: Colors.white,
+          backgroundColor: Colors.red);
+    } else if (project.manager.isEmpty) {
+      Fluttertoast.showToast(
+          msg: "فضلا قم بتحديد اسم مدير المشروع",
+          textColor: Colors.white,
+          backgroundColor: Colors.red);
+    } else if (project.cost == 0) {
+      Fluttertoast.showToast(
+          msg: "فضلا قم بتحديد قيمة المشروع",
+          textColor: Colors.white,
+          backgroundColor: Colors.red);
+    } else if (project.status == null) {
+      Fluttertoast.showToast(
+          msg: "فضلا قم بتحديد حالة المشروع",
+          textColor: Colors.white,
+          backgroundColor: Colors.red);
+    } else {
+      Fluttertoast.showToast(
+          msg: "تم اضافة المشروع بنجاح",
+          textColor: Colors.white,
+          backgroundColor: Colors.green);
+      projects.add(project);
+      setState(() {
+        project = Project();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +81,9 @@ class _PageOneState extends State<PageOne> {
               ),
               Container(
                 child: TextField(
+                  onChanged: (value) {
+                    project.name = value;
+                  },
                   textAlign: TextAlign.right,
                   decoration: InputDecoration(
                       label: Center(
@@ -56,6 +97,9 @@ class _PageOneState extends State<PageOne> {
               ),
               Container(
                 child: TextField(
+                  onChanged: (value) {
+                    project.manager = value;
+                  },
                   textAlign: TextAlign.right,
                   decoration: InputDecoration(
                       label: Center(
@@ -69,6 +113,10 @@ class _PageOneState extends State<PageOne> {
               ),
               Container(
                 child: TextField(
+                  onChanged: (value) {
+                    project.cost =
+                        int.tryParse(value) == null ? 0 : int.parse(value);
+                  },
                   keyboardType: TextInputType.numberWithOptions(),
                   textAlign: TextAlign.right,
                   decoration: InputDecoration(
@@ -95,8 +143,12 @@ class _PageOneState extends State<PageOne> {
                             )),
                             Radio(
                               value: ProjectStatus.approve,
-                              groupValue: projectStatus,
-                              onChanged: (value) {},
+                              groupValue: project.status,
+                              onChanged: (value) {
+                                setState(() {
+                                  project.status = value;
+                                });
+                              },
                             ),
                           ],
                         ),
@@ -109,8 +161,12 @@ class _PageOneState extends State<PageOne> {
                             )),
                             Radio(
                               value: ProjectStatus.cancelled,
-                              groupValue: projectStatus,
-                              onChanged: (value) {},
+                              groupValue: project.status,
+                              onChanged: (value) {
+                                setState(() {
+                                  project.status = value;
+                                });
+                              },
                             ),
                           ],
                         )
@@ -129,8 +185,12 @@ class _PageOneState extends State<PageOne> {
                             )),
                             Radio(
                               value: ProjectStatus.completed,
-                              groupValue: projectStatus,
-                              onChanged: (value) {},
+                              groupValue: project.status,
+                              onChanged: (value) {
+                                setState(() {
+                                  project.status = value;
+                                });
+                              },
                             ),
                           ],
                         ),
@@ -144,8 +204,12 @@ class _PageOneState extends State<PageOne> {
                             ),
                             Radio(
                               value: ProjectStatus.review,
-                              groupValue: projectStatus,
-                              onChanged: (value) {},
+                              groupValue: project.status,
+                              onChanged: (value) {
+                                setState(() {
+                                  project.status = value;
+                                });
+                              },
                             ),
                           ],
                         )
@@ -157,7 +221,8 @@ class _PageOneState extends State<PageOne> {
               SizedBox(
                 height: 50,
               ),
-              ElevatedButton(onPressed: () {}, child: Text("اضافة المشروع"))
+              ElevatedButton(
+                  onPressed: checkAllData, child: Text("اضافة المشروع"))
             ],
           ),
         ),
